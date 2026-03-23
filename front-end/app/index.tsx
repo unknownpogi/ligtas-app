@@ -1,5 +1,11 @@
 import { Redirect } from "expo-router";
+import { useState } from "react";
 
 export default function Index() {
-  return <Redirect href={"/(tabs)/dashboard"} />;
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+
+  if (!isLoggedIn) {
+    return <Redirect href="/(auth)" />;
+  }
+  return <Redirect href={"/(tabs)"} />;
 }

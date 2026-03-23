@@ -1,5 +1,4 @@
-import ProfileScreen from "@/features/profile-screen";
-import RequestScreen from "@/features/request-screen";
+import RequestScreen from "@/features/request";
 
 export default function RequestTab() {
   return <RequestScreen />;

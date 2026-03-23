@@ -1,9 +1,8 @@
-import { VolunteersCard } from "@/components/custome-volunteers-card";
-import { RequestItem } from "@/types";
+import { CardRequest } from "@/components/card-request";
 import { FlatList, Text, View } from "react-native";
 
-export default function VolunteersScreen() {
-  const requestListData: RequestItem[] = [
+export default function RequestScreen() {
+  const requestListData = [
     {
       id: "1",
       label: "Fire Incident",
@@ -24,7 +23,7 @@ export default function VolunteersScreen() {
     },
   ];
   return (
-    <View className="">
+    <View className="px-4 pt-3">
       <FlatList
         data={requestListData}
         scrollEnabled={false}
@@ -32,13 +31,19 @@ export default function VolunteersScreen() {
         contentContainerStyle={{
           gap: 10,
         }}
-        renderItem={({ item }) => (
-          <VolunteersCard
-            label={item.label}
-            urgency={item.urgency}
-            status={item.status}
-          />
-        )}
+        renderItem={({ item }) => {
+          return (
+            <CardRequest
+              id={item.id}
+              label={item.label}
+              status={item.status}
+              category={item.category}
+              urgency={item.urgency}
+              location={item.location}
+              requesterName={item.requesterName}
+            />
+          );
+        }}
       />
     </View>
   );
