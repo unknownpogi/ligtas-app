@@ -1,4 +1,4 @@
-import { StatusCardProps } from "@/types";
+import { RequestItem, StatusCardProps, VolunteerProps } from "@/types";
 import Fontisto from "@expo/vector-icons/Fontisto";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useRef, useState } from "react";
@@ -13,14 +13,16 @@ import {
 } from "react-native";
 import { CarouselBroadcast } from "./carousel";
 import { RecentRequestsSection } from "./recent-requests-section";
+import { useRouter } from "expo-router";
 
 export default function DashboardScreen() {
   const { width } = Dimensions.get("window");
   const flatListRef = useRef<Animated.FlatList<any>>(null);
   const scrollX = useRef(new Animated.Value(0)).current;
   const [index, setIndex] = useState(0);
-  const [taskButton, SetTaskButton] = useState(false);
+  const [taskButton, setTaskButton] = useState(false);
   const TOTAL = 15;
+  const router = useRouter();
   const statusCards = [
     {
       id: "1",
@@ -66,6 +68,40 @@ export default function DashboardScreen() {
       requesterName: "Juan Dela Cruz",
     },
   ];
+
+  const volunteerData: VolunteerProps[] = [
+    {
+      id: 1,
+      personName: "Maria Santos",
+      address: "Brgy. San Isidro, Marikina City",
+      isAvailable: true,
+    },
+    {
+      id: 2,
+      personName: "Juan Dela Cruz",
+      address: "Brgy. Tumana, Marikina City",
+      isAvailable: false,
+    },
+    {
+      id: 3,
+      personName: "Carlo Reyes",
+      address: "Brgy. Concepcion, Marikina City",
+      isAvailable: true,
+    },
+    {
+      id: 4,
+      personName: "Angela Cruz",
+      address: "Brgy. Parang, Marikina City",
+      isAvailable: false,
+    },
+    {
+      id: 5,
+      personName: "Mark Villanueva",
+      address: "Brgy. Nangka, Marikina City",
+      isAvailable: true,
+    },
+  ];
+
   const data = [
     { id: "1", title: "Typhoon Signal #2 Raised" },
     { id: "2", title: "Heavy Rainfall Warning" },
@@ -88,6 +124,19 @@ export default function DashboardScreen() {
       </View>
     );
   };
+
+  const handleSelectRequest = (id: string) => {
+    console.log("Selected ID:", id);
+    if (taskButton) {
+      router.push(`/${id}/volunteers-task`);
+    } else {
+      router.push(`/${id}/manage-request`);
+    }
+  };
+
+  const propsData = taskButton
+    ? { taskButton: true as const, volunteerData: volunteerData }
+    : { taskButton: false as const, requestListData };
 
   return (
     <ScrollView className="pt-safe">
@@ -158,7 +207,7 @@ export default function DashboardScreen() {
           </View>
           <View className="flex-row gap-3 px-4">
             <TouchableOpacity
-              onPress={() => SetTaskButton(false)}
+              onPress={() => setTaskButton(false)}
               className={`${taskButton ? "border border-[#DDDCDA]" : " bg-[#2D6BE4]"} rounded-full px-5 py-3`}
             >
               <Text className={`${taskButton ? "text-black" : "text-white"}`}>
@@ -166,7 +215,7 @@ export default function DashboardScreen() {
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={() => SetTaskButton(true)}
+              onPress={() => setTaskButton(true)}
               className={`${taskButton ? "bg-[#2D6BE4]" : "border border-[#DDDCDA]"} rounded-full px-5 py-3`}
             >
               <Text className={`${taskButton ? "text-white" : "text-black"}`}>
@@ -176,8 +225,8 @@ export default function DashboardScreen() {
           </View>
           <View className="px-4 py-2">
             <RecentRequestsSection
-              requestListData={requestListData}
-              taskButton={taskButton}
+              {...propsData}
+              handleSelectRequest={handleSelectRequest}
             />
           </View>
         </View>

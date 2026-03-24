@@ -44,7 +44,15 @@ const CategorySheet = forwardRef<BottomSheetModal, Props>(
                   key={item.id}
                   item={item}
                   selected={selected}
-                  onSelect={onSelect}
+                  onSelect={(radioItem) => {
+                    onSelect({
+                      id: radioItem.id,
+                      label: radioItem.label,
+                      value: radioItem.value,
+                      iconBrand: radioItem.iconBrand ?? "MaterialIcons",
+                      iconName: radioItem.iconName ?? "info",
+                    });
+                  }}
                 />
               );
             })}

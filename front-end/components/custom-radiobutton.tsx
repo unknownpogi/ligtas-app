@@ -4,7 +4,7 @@ import { ICONS_MAP } from "./custom-icon-maps";
 
 const RadioItem = ({ item, selected, onSelect }: RadioProps) => {
   const isSelected = selected?.id === item.id;
-  const IconComponent = ICONS_MAP[item.iconBrand];
+  const IconComponent = item.iconBrand ? ICONS_MAP[item.iconBrand] : null;
 
   return (
     <TouchableOpacity

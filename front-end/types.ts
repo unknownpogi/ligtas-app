@@ -27,10 +27,28 @@ export type RequestItem = {
   requesterName: string;
 }
 
+
+export type CardRequestProps = RequestItem & {
+  selectedRequest: (id: string) => void;
+};
+
+export type CardVolunteerProps = VolunteerProps & {
+  selectedVolunteer: (id: string) => void;
+};
+
 export type RadioProps = {
-  item: NeedType;
-  selected: NeedType | null;
-  onSelect: (value: NeedType) => void;
+  item: BaseRadioItem;
+  selected: BaseRadioItem | null;
+  onSelect: (value: BaseRadioItem) => void;
+};
+
+export type BaseRadioItem = {
+  id: number;
+  label: string;
+  description?: string;
+  value: string;
+  iconName?: string;
+  iconBrand?: keyof typeof ICONS_MAP;
 };
 
 export type NeedType = {
@@ -56,3 +74,18 @@ export type CategoryType = {
   iconBrand: keyof typeof ICONS_MAP; // <-- this is the key type
   iconName: string;
 }
+
+export type StatusType = {
+  id: number;
+  label: string;
+  value: string;
+  iconBrand?: keyof typeof ICONS_MAP;
+  iconName?: string;
+};
+
+export type VolunteerProps = {
+  id: number;
+  personName: string;
+  address: string;
+  isAvailable: boolean;
+};

@@ -54,7 +54,10 @@ export default function LogInScreen() {
           <View className="flex-1 h-[1px] bg-gray-200" />
         </View>
 
-        <TouchableOpacity className="border border-gray-300 py-4 rounded-2xl items-center">
+        <TouchableOpacity
+          className="border border-gray-300 py-4 rounded-2xl items-center"
+          onPress={() => router.replace("/(auth)/register")}
+        >
           <Text className="font-medium text-black">Create New Account</Text>
         </TouchableOpacity>
 

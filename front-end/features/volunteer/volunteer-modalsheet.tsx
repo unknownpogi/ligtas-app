@@ -6,18 +6,18 @@ import {
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
 import RadioItem from "@/components/custom-radiobutton";
-import { NeedType } from "@/types";
+import { BaseRadioItem } from "@/types";
 
 type Props = {
   modalType: string;
-  urgencyType: NeedType[];
-  selected: NeedType | null;
-  onSelect: (item: NeedType) => void;
+  volunteer: BaseRadioItem[];
+  selected: BaseRadioItem | null;
+  onSelect: (item: BaseRadioItem) => void;
 };
 
-const UrgencySheet = forwardRef<BottomSheetModal, Props>(
-  ({ modalType, urgencyType, selected, onSelect }, ref) => {
-    const snapPoints = useMemo(() => ["30%", "70%", "80%"], []);
+const VolunteerSheet = forwardRef<BottomSheetModal, Props>(
+  ({ modalType, volunteer, selected, onSelect }, ref) => {
+    const snapPoints = useMemo(() => ["40%"], []);
 
     return (
       <BottomSheetModal
@@ -35,26 +35,16 @@ const UrgencySheet = forwardRef<BottomSheetModal, Props>(
       >
         <BottomSheetView>
           <View className="border-b border-b-gray-300 px-4 py-3">
-            <Text className="text-xl">
-              {modalType === "Need" ? "Type of Needs" : "Urgency Level"}
-            </Text>
+            <Text className="text-xl">All Volunteer</Text>
           </View>
           <View className="p-4">
-            {urgencyType.map((item) => {
+            {volunteer.map((item) => {
               return (
                 <RadioItem
                   key={item.id}
                   item={item}
                   selected={selected}
-                  onSelect={(radioItem) => {
-                    onSelect({
-                      id: radioItem.id,
-                      label: radioItem.label,
-                      value: radioItem.value,
-                      iconBrand: radioItem.iconBrand ?? "MaterialIcons",
-                      iconName: radioItem.iconName ?? "info",
-                    });
-                  }}
+                  onSelect={onSelect}
                 />
               );
             })}
@@ -65,4 +55,4 @@ const UrgencySheet = forwardRef<BottomSheetModal, Props>(
   },
 );
 
-export default UrgencySheet;
+export default VolunteerSheet;

@@ -26,7 +26,10 @@ export default function LandingScreen() {
           <Text className="text-white font-semibold text-base">Sign In</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity className="border border-gray-300 py-4 rounded-2xl items-center mt-4">
+        <TouchableOpacity
+          className="border border-gray-300 py-4 rounded-2xl items-center mt-4"
+          onPress={() => router.push("/(auth)/register")}
+        >
           <Text className="text-black font-medium">Create Account</Text>
         </TouchableOpacity>
 

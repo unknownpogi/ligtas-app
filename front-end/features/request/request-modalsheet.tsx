@@ -40,16 +40,23 @@ const RequestSheet = forwardRef<BottomSheetModal, Props>(
             </Text>
           </View>
           <View className="p-4">
-            {needTypes.map((item) => {
-              return (
-                <RadioItem
-                  key={item.id}
-                  item={item}
-                  selected={selected}
-                  onSelect={onSelect}
-                />
-              );
-            })}
+            {needTypes.map((item) => (
+              <RadioItem
+                key={item.id}
+                item={item}
+                selected={selected}
+                onSelect={(radioItem) => {
+                  // map BaseRadioItem -> NeedType safely
+                  onSelect({
+                    id: radioItem.id,
+                    label: radioItem.label,
+                    value: radioItem.value,
+                    iconBrand: radioItem.iconBrand ?? "MaterialIcons",
+                    iconName: radioItem.iconName ?? "info",
+                  });
+                }}
+              />
+            ))}
           </View>
         </BottomSheetView>
       </BottomSheetModal>

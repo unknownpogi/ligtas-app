@@ -5,5 +5,5 @@ export const ICONS_MAP = {
   Feather: Feather,
   MaterialIcons: MaterialIcons,
   FontAwesome5: FontAwesome5,
-  AntDesign: AntDesign
+  AntDesign: AntDesign,
 } as const;
