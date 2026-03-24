@@ -27,7 +27,6 @@ export type RequestItem = {
   requesterName: string;
 }
 
-
 export type CardRequestProps = RequestItem & {
   selectedRequest: (id: string) => void;
 };
@@ -88,4 +87,13 @@ export type VolunteerProps = {
   personName: string;
   address: string;
   isAvailable: boolean;
+};
+
+export type RegisterPayload = {
+  username: string;
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
 };
