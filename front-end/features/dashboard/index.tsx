@@ -1,7 +1,7 @@
 import { RequestItem, StatusCardProps, VolunteerProps } from "@/types";
 import Fontisto from "@expo/vector-icons/Fontisto";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Animated,
   Dimensions,
@@ -14,6 +14,7 @@ import {
 import { CarouselBroadcast } from "./carousel";
 import { RecentRequestsSection } from "./recent-requests-section";
 import { useRouter } from "expo-router";
+import { userStorage } from "@/utils/auth";
 
 export default function DashboardScreen() {
   const { width } = Dimensions.get("window");
@@ -21,6 +22,7 @@ export default function DashboardScreen() {
   const scrollX = useRef(new Animated.Value(0)).current;
   const [index, setIndex] = useState(0);
   const [taskButton, setTaskButton] = useState(false);
+  const [user, setUser] = useState(null);
   const TOTAL = 15;
   const router = useRouter();
   const statusCards = [
@@ -68,7 +70,6 @@ export default function DashboardScreen() {
       requesterName: "Juan Dela Cruz",
     },
   ];
-
   const volunteerData: VolunteerProps[] = [
     {
       id: 1,
@@ -101,13 +102,11 @@ export default function DashboardScreen() {
       isAvailable: true,
     },
   ];
-
   const data = [
     { id: "1", title: "Typhoon Signal #2 Raised" },
     { id: "2", title: "Heavy Rainfall Warning" },
     { id: "3", title: "Flood Alert in Low Areas" },
   ];
-
   const StatusCard = ({ count, label, barColor }: StatusCardProps) => {
     const progress = (count / TOTAL) * 100;
 
@@ -124,7 +123,6 @@ export default function DashboardScreen() {
       </View>
     );
   };
-
   const handleSelectRequest = (id: string) => {
     console.log("Selected ID:", id);
     if (taskButton) {
@@ -133,10 +131,18 @@ export default function DashboardScreen() {
       router.push(`/${id}/manage-request`);
     }
   };
-
   const propsData = taskButton
     ? { taskButton: true as const, volunteerData: volunteerData }
     : { taskButton: false as const, requestListData };
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const loadedUser = await userStorage.getUser();
+      setUser(loadedUser);
+    };
+
+    fetchUser();
+  }, []);
 
   return (
     <ScrollView className="pt-safe">

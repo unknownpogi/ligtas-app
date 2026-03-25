@@ -5,7 +5,28 @@ import { Text, TextInput, TouchableOpacity, View } from "react-native";
 
 export default function LogInScreen() {
   const [secure, setSecure] = useState(true);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [formErrors, setFormErrors] = useState({
+    username: "",
+    password: "",
+  });
   const router = useRouter();
+
+  const handleInputChange = (field: string, value: string) => {
+    if (field === "username") setUsername(value);
+    if (field === "password") setPassword(value);
+
+    setFormErrors((prev) => ({
+      ...prev,
+      [field]: "",
+    }));
+  };
+
+  const handleLogin = () => {
+    console.log("username: ", username);
+    console.log("password: ", password);
+  };
 
   return (
     <View className="flex-1 bg-white px-6 pt-16">
@@ -22,12 +43,14 @@ export default function LogInScreen() {
         <Text className="text-gray-700 mb-2">Email</Text>
         <TextInput
           placeholder="yourname@email.com"
+          onChangeText={(text) => handleInputChange("username", text)}
           className="border border-gray-200 rounded-xl px-4 py-4 text-gray-700"
         />
         <Text className="text-gray-700 mt-6 mb-2">Password</Text>
         <View className="border border-gray-200 rounded-xl px-4 flex-row items-center">
           <TextInput
             placeholder="Enter your password"
+            onChangeText={(text) => handleInputChange("password", text)}
             secureTextEntry={secure}
             className="flex-1 py-4 text-gray-700"
           />
@@ -42,7 +65,7 @@ export default function LogInScreen() {
         </View>
 
         <TouchableOpacity
-          onPress={() => router.replace("/(tabs)")}
+          onPress={() => handleLogin()}
           className="bg-orange-600 py-4 rounded-2xl items-center mt-8 shadow-md"
         >
           <Text className="text-white font-semibold">Sign In</Text>

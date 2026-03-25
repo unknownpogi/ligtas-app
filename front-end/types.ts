@@ -9,23 +9,23 @@ export type StatusCardProps = {
 
 export type BroadcastProps = {
   flatListRef: React.RefObject<Animated.FlatList<any> | null>;
-  data: any[],
-  scrollX: Animated.Value,
-  width: number,
-  index: number,
-  setIndex: React.Dispatch<React.SetStateAction<number>>
-}
+  data: any[];
+  scrollX: Animated.Value;
+  width: number;
+  index: number;
+  setIndex: React.Dispatch<React.SetStateAction<number>>;
+};
 
 export type RequestItem = {
   id: string;
   label: string;
   status: string;
-  progress: string,
+  progress: string;
   category: string;
   urgency: string;
   location: string;
   requesterName: string;
-}
+};
 
 export type CardRequestProps = RequestItem & {
   selectedRequest: (id: string) => void;
@@ -72,7 +72,7 @@ export type CategoryType = {
   value: string;
   iconBrand: keyof typeof ICONS_MAP; // <-- this is the key type
   iconName: string;
-}
+};
 
 export type StatusType = {
   id: number;
@@ -96,4 +96,20 @@ export type RegisterPayload = {
   firstName: string;
   lastName: string;
   phoneNumber: string;
+  type: string;
 };
+
+export type FormValues = {
+  firstName: string;
+  lastName: string;
+  username: string;
+  email: string;
+  phone: string;
+  password: string;
+  confirmPassword: string;
+  role: string;
+};
+
+export type FormFields = keyof FormValues;
+
+export type FormErrors = Partial<Record<FormFields, string>>;

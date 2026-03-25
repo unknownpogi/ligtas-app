@@ -2,9 +2,9 @@ import { register } from "@/services/auth.service";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const useRegister = () => {
-    const queryClient = useQueryClient();
-    return useMutation({
-        mutationKey: ["register-account"],
-        mutationFn: register,
-    })
-}
+  //   const queryClient = useQueryClient();
+  return useMutation({
+    mutationKey: ["register-account"],
+    mutationFn: register,
+  });
+};
