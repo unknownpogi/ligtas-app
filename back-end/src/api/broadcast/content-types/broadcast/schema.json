@@ -1,0 +1,42 @@
+{
+  "kind": "collectionType",
+  "collectionName": "broadcasts",
+  "info": {
+    "singularName": "broadcast",
+    "pluralName": "broadcasts",
+    "displayName": "Broadcast"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "categoryType": {
+      "type": "enumeration",
+      "enum": [
+        "Relief Operations",
+        "Weather Advisory",
+        "Health & Medical",
+        "Evacuation Notice",
+        "Infrastructure Update",
+        "Community News",
+        "General Information"
+      ]
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "urgencyType": {
+      "type": "enumeration",
+      "enum": [
+        "High",
+        "Medium",
+        "Low"
+      ]
+    },
+    "message": {
+      "type": "string"
+    }
+  }
+}

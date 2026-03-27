@@ -1,6 +1,13 @@
 import { CardRequest } from "@/components/card-request";
+import { useGetAllRequest } from "@/hooks/useRequests";
 import { useRouter } from "expo-router";
-import { FlatList, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  FlatList,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
 
 export default function RequestScreen() {
   const router = useRouter();
@@ -26,36 +33,62 @@ export default function RequestScreen() {
       requesterName: "Juan Dela Cruz",
     },
   ];
+  const {
+    data: reqAllData,
+    isLoading: reqAllLoading,
+    isError: reqError,
+    isSuccess: reqSuccess,
+  } = useGetAllRequest();
+
+  if (reqAllLoading) {
+    return (
+      <View className="flex-1 justify-center items-center bg-white">
+        <ActivityIndicator
+          size="large"
+          color="#3b82f6" // Tailwind blue-500
+        />
+      </View>
+    );
+  }
+
+  if (reqError || !reqAllData) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <p>Error loading task</p>
+      </div>
+    );
+  }
 
   const handleSelectRequest = (id: string) => {
     console.log("Selected request: ", id);
     router.push(`/${id}/manage-request`);
   };
   return (
-    <View className="px-4 pt-3">
+    <ScrollView className="px-4 py-5">
       <FlatList
-        data={requestListData}
+        data={reqAllData.data}
         scrollEnabled={false}
         keyExtractor={(item) => item.id}
-        contentContainerStyle={{
-          gap: 10,
-        }}
         renderItem={({ item }) => {
           return (
             <CardRequest
               id={item.id}
-              label={item.label}
-              status={item.status}
+              documentId={item.documentId}
+              manageRequest={false}
+              typeNeed={item.typeNeed}
+              createdAt={item.createdAt}
+              stats={item.stats}
               progress={item.progress}
               category={item.category}
-              urgency={item.urgency}
-              location={item.location}
-              requesterName={item.requesterName}
+              urgencyType={item.urgencyType}
+              address={item.address}
+              peopleAffected={item.peopleAffected}
+              requester={item.requester}
               selectedRequest={handleSelectRequest}
             />
           );
         }}
       />
-    </View>
+    </ScrollView>
   );
 }

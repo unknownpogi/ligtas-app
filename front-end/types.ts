@@ -16,15 +16,24 @@ export type BroadcastProps = {
   setIndex: React.Dispatch<React.SetStateAction<number>>;
 };
 
+export type Requester = {
+  firstName: string;
+  lastName: string;
+};
+
 export type RequestItem = {
   id: string;
-  label: string;
-  status: string;
+  documentId: string;
+  manageRequest: boolean;
+  typeNeed: string;
+  createdAt: string;
+  stats: string;
   progress: string;
   category: string;
-  urgency: string;
-  location: string;
-  requesterName: string;
+  urgencyType: string;
+  address: string;
+  peopleAffected: number;
+  requester: Requester;
 };
 
 export type CardRequestProps = RequestItem & {
@@ -83,10 +92,11 @@ export type StatusType = {
 };
 
 export type VolunteerProps = {
-  id: number;
-  personName: string;
-  address: string;
-  isAvailable: boolean;
+  documentId: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  stats: boolean;
 };
 
 export type RegisterPayload = {
@@ -113,3 +123,37 @@ export type FormValues = {
 export type FormFields = keyof FormValues;
 
 export type FormErrors = Partial<Record<FormFields, string>>;
+
+export type LoginPayload = {
+  username: string; // email or username
+  password: string;
+};
+
+export type StatusItem = {
+  id: string;
+  title: string;
+  time: string;
+};
+
+export type RequestForm = {
+  typeNeed: string;
+  urgencyType: string;
+  address: string;
+  peopleAffected: number;
+  description: string;
+};
+
+export type BroadcastForm = {
+  categoryType: string;
+  title: string;
+  urgencyType: string;
+  message: string;
+};
+
+export type Broadcast = {
+  title: string;
+  message: string;
+  categoryType: string;
+  urgencyType: string;
+  createdAt: string;
+};

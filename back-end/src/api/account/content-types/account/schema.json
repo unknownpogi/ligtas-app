@@ -23,14 +23,25 @@
       "type": "string",
       "required": true
     },
-    "type": {
-      "type": "string"
-    },
     "user": {
       "type": "relation",
       "relation": "oneToOne",
       "target": "plugin::users-permissions.user",
-      "inversedBy": "account"
+      "mappedBy": "account"
+    },
+    "requests": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::request.request",
+      "mappedBy": "requester"
+    },
+    "stats": {
+      "type": "enumeration",
+      "enum": [
+        "Active",
+        "Available",
+        "Unavailable "
+      ]
     }
   }
 }

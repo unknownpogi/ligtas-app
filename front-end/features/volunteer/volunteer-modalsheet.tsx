@@ -17,7 +17,7 @@ type Props = {
 
 const VolunteerSheet = forwardRef<BottomSheetModal, Props>(
   ({ modalType, volunteer, selected, onSelect }, ref) => {
-    const snapPoints = useMemo(() => ["40%"], []);
+    const snapPoints = useMemo(() => ["30%"], []);
 
     return (
       <BottomSheetModal

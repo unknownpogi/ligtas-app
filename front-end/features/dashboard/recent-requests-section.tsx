@@ -31,13 +31,14 @@ export const RecentRequestsSection = (props: RequestListProps) => {
       <FlatList
         data={props.volunteerData}
         scrollEnabled={false}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item) => item.documentId}
         renderItem={({ item }) => (
           <VolunteersCard
-            id={item.id}
-            personName={item.personName}
-            address={item.address}
-            isAvailable={item.isAvailable}
+            documentId={item.documentId}
+            firstName={item.firstName}
+            lastName={item.lastName}
+            phoneNumber={item.phoneNumber}
+            stats={item.stats}
             selectedVolunteer={props.handleSelectRequest}
           />
         )}
@@ -53,13 +54,17 @@ export const RecentRequestsSection = (props: RequestListProps) => {
       renderItem={({ item }) => (
         <CardRequest
           id={item.id}
-          label={item.label}
-          status={item.status}
+          documentId={item.documentId}
+          manageRequest={false}
+          typeNeed={item.typeNeed}
+          createdAt={item.createdAt}
+          stats={item.stats}
           progress={item.progress}
           category={item.category}
-          urgency={item.urgency}
-          location={item.location}
-          requesterName={item.requesterName}
+          urgencyType={item.urgencyType}
+          address={item.address}
+          peopleAffected={item.peopleAffected}
+          requester={item.requester}
           selectedRequest={props.handleSelectRequest}
         />
       )}

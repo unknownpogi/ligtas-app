@@ -37,23 +37,21 @@ export const CarouselBroadcast = ({
                 justifyContent: "space-between",
               }}
             >
-              <Text style={{ color: "#fff", fontWeight: "bold" }}>
-                ⚠️ URGENT
-              </Text>
-
-              <Text
-                style={{
-                  color: "#fff",
-                  fontSize: 16,
-                  fontWeight: "600",
-                }}
-              >
-                {item.title}
-              </Text>
-
-              <TouchableOpacity className="self-end bg-[#D1D5DB] px-4 py-[6px] rounded-xl">
-                <Text>View</Text>
-              </TouchableOpacity>
+              <View>
+                <Text className="font-bold">{item.urgencyType}</Text>
+              </View>
+              <View className="flex-row justify-between">
+                <Text
+                  className="text-xl text-white"
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                >
+                  {item.title}
+                </Text>
+                <TouchableOpacity className="bg-[#D1D5DB] px-4 py-[6px] rounded-xl">
+                  <Text>View</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
         )}

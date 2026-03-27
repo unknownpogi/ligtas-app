@@ -22,3 +22,11 @@ export default function Index() {
 
   return <Redirect href="/(tabs)" />;
 }
+
+// const { user, isAuthenticated, isLoading } = useAuth();
+
+//   if (isLoading) return <Text>Loading...</Text>;
+
+//   if (!isAuthenticated) {
+//     return <Redirect href="/login" />;
+//   }

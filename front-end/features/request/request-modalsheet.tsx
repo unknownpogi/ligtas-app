@@ -17,7 +17,7 @@ type Props = {
 
 const RequestSheet = forwardRef<BottomSheetModal, Props>(
   ({ modalType, needTypes, selected, onSelect }, ref) => {
-    const snapPoints = useMemo(() => ["30%", "70%", "80%"], []);
+    const snapPoints = useMemo(() => ["35%"], []);
 
     return (
       <BottomSheetModal

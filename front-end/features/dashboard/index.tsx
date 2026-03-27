@@ -1,7 +1,7 @@
 import { RequestItem, StatusCardProps, VolunteerProps } from "@/types";
 import Fontisto from "@expo/vector-icons/Fontisto";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import {
   Animated,
   Dimensions,
@@ -15,6 +15,10 @@ import { CarouselBroadcast } from "./carousel";
 import { RecentRequestsSection } from "./recent-requests-section";
 import { useRouter } from "expo-router";
 import { userStorage } from "@/utils/auth";
+import { useAuth } from "@/hooks/useAuth";
+import { useGetAllRequest, useGetRequest } from "@/hooks/useRequests";
+import { useGetAllBroadcast } from "@/hooks/useBroadcast";
+import { useGetAllvolunteer } from "@/hooks/useVolunteer";
 
 export default function DashboardScreen() {
   const { width } = Dimensions.get("window");
@@ -22,91 +26,74 @@ export default function DashboardScreen() {
   const scrollX = useRef(new Animated.Value(0)).current;
   const [index, setIndex] = useState(0);
   const [taskButton, setTaskButton] = useState(false);
-  const [user, setUser] = useState(null);
+  const {
+    user: userdata,
+    account,
+    isAuthenticated,
+    isLoading: authLoading,
+  } = useAuth();
+  const {
+    data: reqData,
+    isLoading: reqLoading,
+    isFetching,
+    isError,
+    isSuccess,
+  } = useGetRequest();
+  const {
+    data: broadData,
+    isLoading: broadLoading,
+    isError: broadError,
+    isSuccess: broadSuccess,
+  } = useGetAllBroadcast();
+  const {
+    data: reqAllData,
+    isLoading: reqAllLoading,
+    isError: reqError,
+    isSuccess: reqSuccess,
+  } = useGetAllRequest();
+  const {
+    data: volAllData,
+    isLoading: volAllLoading,
+    isError: volError,
+    isSuccess: volSuccess,
+  } = useGetAllvolunteer();
   const TOTAL = 15;
   const router = useRouter();
+
+  if (
+    authLoading ||
+    reqLoading ||
+    broadLoading ||
+    reqAllLoading ||
+    volAllLoading
+  )
+    return <Text>Loading...</Text>;
+
+  if (!isAuthenticated) return <Text>Please log in</Text>;
   const statusCards = [
     {
       id: "1",
-      count: 9,
+      count: reqData.pending,
       label: "Pending",
       barColor: "bg-amber-400",
       barWidth: "w-2/3",
     },
     {
       id: "2",
-      count: 6,
+      count: reqData.inProgress,
       label: "In progress",
       barColor: "bg-blue-500",
       barWidth: "w-1/2",
     },
     {
       id: "3",
-      count: 0,
+      count: reqData.resolved,
       label: "Resolved",
-      barColor: "bg-gray-300",
+      barColor: "bg-green-400",
       barWidth: "w-0",
     },
   ];
-  const requestListData = [
-    {
-      id: "1",
-      label: "Fire Incident",
-      status: "In Progress",
-      progress: "In Progress",
-      category: "Emergency",
-      urgency: "High",
-      location: "Brgy. Jan lang",
-      requesterName: "Rojan Roy",
-    },
-    {
-      id: "2",
-      label: "Flood Assistance",
-      status: "Pending",
-      progress: "In Progress",
-      category: "Disaster",
-      urgency: "Medium",
-      location: "Brgy. X",
-      requesterName: "Juan Dela Cruz",
-    },
-  ];
-  const volunteerData: VolunteerProps[] = [
-    {
-      id: 1,
-      personName: "Maria Santos",
-      address: "Brgy. San Isidro, Marikina City",
-      isAvailable: true,
-    },
-    {
-      id: 2,
-      personName: "Juan Dela Cruz",
-      address: "Brgy. Tumana, Marikina City",
-      isAvailable: false,
-    },
-    {
-      id: 3,
-      personName: "Carlo Reyes",
-      address: "Brgy. Concepcion, Marikina City",
-      isAvailable: true,
-    },
-    {
-      id: 4,
-      personName: "Angela Cruz",
-      address: "Brgy. Parang, Marikina City",
-      isAvailable: false,
-    },
-    {
-      id: 5,
-      personName: "Mark Villanueva",
-      address: "Brgy. Nangka, Marikina City",
-      isAvailable: true,
-    },
-  ];
-  const data = [
-    { id: "1", title: "Typhoon Signal #2 Raised" },
-    { id: "2", title: "Heavy Rainfall Warning" },
-    { id: "3", title: "Flood Alert in Low Areas" },
-  ];
+
   const StatusCard = ({ count, label, barColor }: StatusCardProps) => {
     const progress = (count / TOTAL) * 100;
 
@@ -123,26 +110,23 @@ export default function DashboardScreen() {
       </View>
     );
   };
-  const handleSelectRequest = (id: string) => {
-    console.log("Selected ID:", id);
+  const handleSelectRequest = (documentId: string) => {
     if (taskButton) {
-      router.push(`/${id}/volunteers-task`);
+      router.push(`/${documentId}/volunteers-task`);
     } else {
-      router.push(`/${id}/manage-request`);
+      router.push(`/${documentId}/manage-request`);
     }
   };
+
   const propsData = taskButton
-    ? { taskButton: true as const, volunteerData: volunteerData }
-    : { taskButton: false as const, requestListData };
+    ? { taskButton: true as const, volunteerData: volAllData.data }
+    : { taskButton: false as const, requestListData: reqAllData.data };
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      const loadedUser = await userStorage.getUser();
-      setUser(loadedUser);
-    };
+  const isAdmin = userdata?.role?.type === "admin";
+  const isResident = userdata?.role?.type === "resident";
+  const isVolunteer = userdata?.role?.type === "volunteer";
 
-    fetchUser();
-  }, []);
+  // console.log(JSON.stringify(reqAllData.data, null, 2));
 
   return (
     <ScrollView className="pt-safe">
@@ -163,35 +147,41 @@ export default function DashboardScreen() {
           </View>
         </View>
 
-        <View className="p-4 flex-col gap-2">
-          <Text>REQUEST OVERVIEW</Text>
-          <FlatList
-            data={statusCards}
-            keyExtractor={(item) => item.id}
-            numColumns={3}
-            scrollEnabled={false}
-            renderItem={({ item }) => (
-              <StatusCard
-                count={item.count}
-                label={item.label}
-                barColor={item.barColor}
-              />
-            )}
-          />
-        </View>
+        {isAdmin && (
+          <View className="p-4 flex-col gap-2">
+            <Text>REQUEST OVERVIEW</Text>
+            <FlatList
+              data={statusCards}
+              keyExtractor={(item) => item.id}
+              numColumns={3}
+              scrollEnabled={false}
+              renderItem={({ item }) => (
+                <StatusCard
+                  count={item.count}
+                  label={item.label}
+                  barColor={item.barColor}
+                />
+              )}
+            />
+          </View>
+        )}
 
-        <View>
-          <View className="flex-row justify-between px-4">
+        <View className={`${isResident || isVolunteer ? "py-4" : ""}`}>
+          <View
+            className={`px-4 ${isAdmin ? "flex-row justify-between" : "pb-2"}`}
+          >
             <Text>BROADCAST</Text>
-            <View className="flex-row">
-              <MaterialIcons name="add" size={24} color="black" />
-              <Text>New</Text>
-            </View>
+            {isAdmin && (
+              <TouchableOpacity className="flex-row">
+                <MaterialIcons name="add" size={24} color="black" />
+                <Text>New</Text>
+              </TouchableOpacity>
+            )}
           </View>
           <View>
             <CarouselBroadcast
               flatListRef={flatListRef}
-              data={data}
+              data={broadData.data}
               scrollX={scrollX}
               width={width}
               index={index}
@@ -203,32 +193,42 @@ export default function DashboardScreen() {
         <View>
           <View className="flex-row justify-between px-4 pb-2 pt-4">
             <View>
-              <Text>{taskButton ? "ALL VOLUNTEERS" : "RECENT REQUESTS"}</Text>
+              <Text>
+                {isResident
+                  ? "My Requests"
+                  : isVolunteer
+                    ? "Open Tasks"
+                    : taskButton
+                      ? "ALL VOLUNTEERS"
+                      : "RECENT REQUESTS"}
+              </Text>
             </View>
             <View>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => router.push("/(tabs)/request")}>
                 <Text className="text-blue-600">See all</Text>
               </TouchableOpacity>
             </View>
           </View>
-          <View className="flex-row gap-3 px-4">
-            <TouchableOpacity
-              onPress={() => setTaskButton(false)}
-              className={`${taskButton ? "border border-[#DDDCDA]" : " bg-[#2D6BE4]"} rounded-full px-5 py-3`}
-            >
-              <Text className={`${taskButton ? "text-black" : "text-white"}`}>
-                Requests
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => setTaskButton(true)}
-              className={`${taskButton ? "bg-[#2D6BE4]" : "border border-[#DDDCDA]"} rounded-full px-5 py-3`}
-            >
-              <Text className={`${taskButton ? "text-white" : "text-black"}`}>
-                Volunteers
-              </Text>
-            </TouchableOpacity>
-          </View>
+          {isAdmin && (
+            <View className="flex-row gap-3 px-4">
+              <TouchableOpacity
+                onPress={() => setTaskButton(false)}
+                className={`${taskButton ? "border border-[#DDDCDA]" : " bg-[#2D6BE4]"} rounded-full px-5 py-3`}
+              >
+                <Text className={`${taskButton ? "text-black" : "text-white"}`}>
+                  Requests
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => setTaskButton(true)}
+                className={`${taskButton ? "bg-[#2D6BE4]" : "border border-[#DDDCDA]"} rounded-full px-5 py-3`}
+              >
+                <Text className={`${taskButton ? "text-white" : "text-black"}`}>
+                  Volunteers
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
           <View className="px-4 py-2">
             <RecentRequestsSection
               {...propsData}

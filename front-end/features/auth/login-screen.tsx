@@ -1,3 +1,5 @@
+import { useLogin } from "@/hooks/useAuth";
+import { userStorage } from "@/utils/auth";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useState } from "react";
@@ -11,6 +13,7 @@ export default function LogInScreen() {
     username: "",
     password: "",
   });
+  const { mutate, isPending, isError, isSuccess } = useLogin();
   const router = useRouter();
 
   const handleInputChange = (field: string, value: string) => {
@@ -24,8 +27,22 @@ export default function LogInScreen() {
   };
 
   const handleLogin = () => {
-    console.log("username: ", username);
-    console.log("password: ", password);
+    mutate(
+      {
+        username,
+        password,
+      },
+      {
+        onSuccess: async (data) => {
+          console.log("user data ngani:", data.currentUser);
+          await userStorage.setUser(data.currentUser);
+          router.replace("/(tabs)");
+        },
+        onError: (err: any) => {
+          console.log(err.response?.data);
+        },
+      },
+    );
   };
 
   return (

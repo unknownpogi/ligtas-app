@@ -49,14 +49,14 @@ export default function RegisterScreen() {
     {
       id: 1,
       label: "Resident",
-      value: "resident",
+      value: "3",
       iconBrand: "Feather",
       iconName: "home",
     },
     {
       id: 2,
       label: "Volunteer",
-      value: "volunteer",
+      value: "4",
       iconBrand: "MaterialIcons",
       iconName: "people-outline",
     },
@@ -116,8 +116,6 @@ export default function RegisterScreen() {
       isValid = false;
     }
 
-    console.log(errors);
-
     setFormErrors(errors);
     return isValid;
   };
@@ -143,8 +141,6 @@ export default function RegisterScreen() {
       return;
     }
 
-    console.log("ayos");
-
     mutate(
       {
         username,
@@ -157,10 +153,8 @@ export default function RegisterScreen() {
       },
       {
         onSuccess: async (data) => {
-          console.log(data);
-          // await authStorage.setToken(data.jwt);
-          // await userStorage.setUser(data.user);
-          // router.replace("/(tabs)");
+          await userStorage.setUser(data.currentUser);
+          router.replace("/(tabs)");
         },
         onError: (err: any) => {
           console.log(err.response?.data);

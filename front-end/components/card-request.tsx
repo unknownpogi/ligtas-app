@@ -5,13 +5,17 @@ type Status = "Pending" | "In Progress" | "Resolved" | "Cancelled";
 
 export const CardRequest = ({
   id,
-  label,
-  status,
+  documentId,
+  manageRequest,
+  typeNeed,
+  createdAt,
+  stats,
   progress,
   category,
-  urgency,
-  location,
-  requesterName,
+  urgencyType,
+  address,
+  peopleAffected,
+  requester,
   selectedRequest,
 }: CardRequestProps) => {
   const getStatusBorderColor = (status: string) => {
@@ -29,60 +33,92 @@ export const CardRequest = ({
     }
   };
 
+  const timeAgo = (createdAt: string) => {
+    const now = new Date();
+    const createdTime = new Date(createdAt);
+
+    const diffMs = now.getTime() - createdTime.getTime();
+
+    const diffMinutes = Math.floor(diffMs / 1000 / 60);
+    const diffHours = Math.floor(diffMinutes / 60);
+    const diffDays = Math.floor(diffHours / 24);
+
+    if (diffMinutes < 1) {
+      return "just now";
+    }
+
+    if (diffMinutes < 60) {
+      return `${diffMinutes} minute${diffMinutes !== 1 ? "s" : ""} ago`;
+    }
+
+    if (diffHours < 24) {
+      return `${diffHours} hour${diffHours !== 1 ? "s" : ""} ago`;
+    }
+
+    return `${diffDays} day${diffDays !== 1 ? "s" : ""} ago`;
+  };
+
   return (
     <View
-      className={`bg-white rounded-2xl p-4 mb-2 border border-gray-200 border-l-4 ${getStatusBorderColor(status)}`}
+      className={`bg-white rounded-2xl p-4 mb-2 border border-gray-200 border-l-4 ${getStatusBorderColor(stats)}`}
     >
-      <TouchableOpacity onPress={() => selectedRequest(id)}>
+      <TouchableOpacity onPress={() => selectedRequest(documentId)}>
         <View className="flex-row justify-between items-center">
-          <Text className="text-lg font-semibold">{label}</Text>
+          <Text className="text-lg font-semibold">{typeNeed}</Text>
 
           <View
             className={`px-3 py-1 rounded-full ${
-              progress === "In Progress" ? "bg-orange-100" : "bg-yellow-100"
+              stats === "In Progress" ? "bg-orange-100" : "bg-yellow-100"
             }`}
           >
             <Text
               className={`text-xs font-medium ${
-                progress === "In Progress"
-                  ? "text-orange-600"
-                  : "text-yellow-700"
+                stats === "In Progress" ? "text-orange-600" : "text-yellow-700"
               }`}
             >
-              {progress}
+              {stats}
             </Text>
           </View>
         </View>
         <View className="mt-2">
           <View
             className={`self-start px-3 py-1 rounded-full ${
-              status === "High"
+              urgencyType === "High"
                 ? "bg-red-100"
-                : status === "Medium"
+                : urgencyType === "Medium"
                   ? "bg-yellow-100"
                   : "bg-green-100"
             }`}
           >
             <Text
               className={`text-xs font-medium ${
-                status === "High"
+                urgencyType === "High"
                   ? "text-red-600"
-                  : status === "Medium"
+                  : urgencyType === "Medium"
                     ? "text-yellow-700"
                     : "text-green-600"
               }`}
             >
-              • {status}
+              • {urgencyType}
             </Text>
           </View>
         </View>
 
-        <Text className="text-gray-500 mt-2">{location}</Text>
+        <Text className="text-gray-500 mt-2">{address}</Text>
 
-        {requesterName ? (
-          <Text className="text-blue-600 mt-1">{requesterName}</Text>
+        {!manageRequest ? (
+          requester ? (
+            <Text className="text-blue-600 mt-1">
+              {`${requester.firstName} ${requester.lastName}`}
+            </Text>
+          ) : (
+            <Text className="text-red-500 mt-1">Unassigned</Text>
+          )
         ) : (
-          <Text className="text-red-500 mt-1">Unassigned</Text>
+          <View className="flex-row gap-2">
+            <Text className="text-blue-600">{peopleAffected} people</Text>
+            <Text className="text-gray-600">{timeAgo(createdAt)}</Text>
+          </View>
         )}
       </TouchableOpacity>
     </View>

@@ -454,7 +454,10 @@ export interface ApiAccountAccount extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     phoneNumber: Schema.Attribute.String & Schema.Attribute.Required;
     publishedAt: Schema.Attribute.DateTime;
-    type: Schema.Attribute.String;
+    requests: Schema.Attribute.Relation<'oneToMany', 'api::request.request'>;
+    stats: Schema.Attribute.Enumeration<
+      ['Active', 'Available', 'Unavailable ']
+    >;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -462,6 +465,86 @@ export interface ApiAccountAccount extends Struct.CollectionTypeSchema {
       'oneToOne',
       'plugin::users-permissions.user'
     >;
+  };
+}
+
+export interface ApiBroadcastBroadcast extends Struct.CollectionTypeSchema {
+  collectionName: 'broadcasts';
+  info: {
+    displayName: 'Broadcast';
+    pluralName: 'broadcasts';
+    singularName: 'broadcast';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    categoryType: Schema.Attribute.Enumeration<
+      [
+        'Relief Operations',
+        'Weather Advisory',
+        'Health & Medical',
+        'Evacuation Notice',
+        'Infrastructure Update',
+        'Community News',
+        'General Information',
+      ]
+    >;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::broadcast.broadcast'
+    > &
+      Schema.Attribute.Private;
+    message: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    urgencyType: Schema.Attribute.Enumeration<['High', 'Medium', 'Low']>;
+  };
+}
+
+export interface ApiRequestRequest extends Struct.CollectionTypeSchema {
+  collectionName: 'requests';
+  info: {
+    displayName: 'Request';
+    pluralName: 'requests';
+    singularName: 'request';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    address: Schema.Attribute.String & Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.String & Schema.Attribute.Required;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::request.request'
+    > &
+      Schema.Attribute.Private;
+    peopleAffected: Schema.Attribute.Integer & Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    requester: Schema.Attribute.Relation<'manyToOne', 'api::account.account'>;
+    stats: Schema.Attribute.Enumeration<
+      ['Pending', 'In Progress', 'Resolved']
+    > &
+      Schema.Attribute.DefaultTo<'Pending'>;
+    typeNeed: Schema.Attribute.Enumeration<
+      ['Food', 'Medical', 'Rescue', 'Shelter', 'Water', 'Other']
+    >;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    urgencyType: Schema.Attribute.Enumeration<['High', 'Medium', 'Low']>;
   };
 }
 
@@ -977,6 +1060,8 @@ declare module '@strapi/strapi' {
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
       'api::account.account': ApiAccountAccount;
+      'api::broadcast.broadcast': ApiBroadcastBroadcast;
+      'api::request.request': ApiRequestRequest;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;
